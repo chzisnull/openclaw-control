@@ -1,96 +1,56 @@
-# OpenClaw Control Center (OCC) - Phase 3
+# OpenClaw Control Center (OCC)
 
-## Overview
-OpenClaw Control Center Phase 3 implements a comprehensive web-based dashboard for monitoring and managing OpenClaw agent networks with:
+OpenClaw 的全景管理控制台。提供上帝视角，实时监控所有 Agent 的思考过程与交互拓扑。
 
-- Interactive agent topology visualization using LeaferJS
-- Real-time log streaming via WebSocket connections
-- Dynamic configuration management
-- Comprehensive monitoring dashboard
+## 🌟 核心特性
 
-## Prerequisites
-- Node.js 18+
-- npm or yarn
+- **上帝视角 (God Mode)**: 基于 **LeaferJS** 的动态拓扑图，直观展示 Agent 网络关系。
+- **矩阵监控 (The Matrix)**: 通过 **WebSocket** 实时推送所有 Agent 的本地日志流，感受代码的呼吸。
+- **全权掌控**: 可视化编辑 `openclaw.json`，支持模型一键切换与配置校验。
+- **双模操作**: 既有炫酷的 Web Dashboard，也有高效的 `occ` 命令行工具。
 
-## Getting Started
+## 🏗️ 架构说明
 
-### 1. Install Dependencies
+本项目采用 **Local First** 设计理念：
+- **前端**: Next.js (App Router) + Tailwind CSS + shadcn/ui。
+- **可视化**: LeaferJS 高性能 Canvas 引擎。
+- **后端**: Fastify + WebSocket + Chokidar (监听 `~/.openclaw` 文件变动)。
+- **核心逻辑**: 直接读写本地 `~/.openclaw` 目录，无需额外数据库。
+
+## 🚀 快速开始
+
+### 1. 安装
+克隆仓库并安装依赖：
 ```bash
-cd openclaw-control/src/web
+git clone https://github.com/chzisnull/openclaw-control.git
+cd openclaw-control
 npm install
+cd src/web && npm install
 ```
 
-### 2. Start the Backend Server
+### 2. 启动服务
+在根目录下运行：
 ```bash
-cd openclaw-control/src/server
-node index.js
+node bin/occ.js serve
 ```
-The server will start on `http://localhost:3000` and expose:
-- REST APIs at `/api/*`
-- WebSocket endpoint at `/ws`
-
-### 3. Start the Frontend Development Server
+或者直接使用 `npm start`:
 ```bash
-cd openclaw-control/src/web
-npm run dev
+npm start
 ```
-The frontend will start on `http://localhost:3000` (same port as backend due to proxy configuration)
+服务启动后，访问 `http://localhost:3000` 即可进入控制台。
 
-## Features
+## 🔌 OpenClaw 接入指南
 
-### Dashboard
-- Real-time agent statistics
-- Interactive topology visualization
-- Live log stream
-- Connection status monitoring
+本项目无需对现有的 OpenClaw 进行任何侵入性修改。它通过以下方式自动接入：
+1. **自动定位**: 默认读取环境变量或 `~/.openclaw/openclaw.json`。
+2. **实时同步**: 使用 `chokidar` 监听 `~/.openclaw/agents/*/sessions/*.jsonl` 文件。
+3. **指令下发**: 通过 OpenClaw 内部 API 实现 UI 端的指令干预。
 
-### Topology Visualization
-- Interactive agent network map
-- Color-coded status indicators
-- Responsive design
+## 📂 项目结构
+- `bin/`: CLI 入口 (`occ`)。
+- `src/lib/`: 核心配置读取与文件处理逻辑。
+- `src/server/`: Fastify 服务端与 WebSocket 广播中心。
+- `src/web/`: Next.js 前端项目（包含 LeaferJS 可视化组件）。
 
-### Configuration Management
-- JSON-based configuration editor
-- Validation and error handling
-- Save/load functionality
-
-### Real-time Monitoring
-- WebSocket-based log streaming
-- Auto-refreshing agent status
-- Connection health monitoring
-
-## Project Structure
-```
-openclaw-control/
-├── src/
-│   ├── server/           # Backend server with WebSocket support
-│   └── web/              # Next.js frontend application
-│       ├── app/          # Pages and routing
-│       │   ├── api/      # API routes
-│       │   ├── dashboard/ # Main dashboard
-│       │   ├── matrix/   # Log stream
-│       │   └── config/   # Configuration
-│       ├── components/   # Reusable UI components
-│       └── public/       # Static assets
-```
-
-## Technologies Used
-- **Frontend**: Next.js 16.1.6, React 19.2.3, TypeScript
-- **Styling**: Tailwind CSS
-- **Visualization**: LeaferJS
-- **WebSocket**: react-use-websocket
-- **Data Fetching**: SWR
-- **Icons**: Lucide React
-- **Backend**: Fastify.js, ws, chokidar
-
-## API Endpoints
-- `GET /api/agents` - Retrieve agent list
-- `GET /api/config` - Retrieve configuration
-- `POST /api/config` - Update configuration
-- `WebSocket /ws` - Real-time log stream
-
-## Development
-For development, both servers need to run simultaneously. The backend provides the API and WebSocket services while the frontend provides the user interface.
-
-## Architecture Details
-See `OCC_PHASE3_ARCHITECTURE.md` for detailed architectural information.
+---
+*Powered by OpenClaw Code Department & Gemini 3 Pro.*
